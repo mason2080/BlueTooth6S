@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -467,6 +468,7 @@ public class MainActivity extends AppCompatActivity {
             if (action.equals(UartService.ACTION_GATT_CONNECTED)) {
                 System.out.println("BroadcastReceiver:ACTION_GATT_CONNECTED");
                 textview_iscConnected.setText(deviceName + ":已建立连接");
+                textview_iscConnected.setTextColor(Color.GREEN);
                 String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
 
                 btnScan.setText("断开");
@@ -482,6 +484,7 @@ public class MainActivity extends AppCompatActivity {
             if (action.equals(UartService.ACTION_GATT_DISCONNECTED)) {
                 System.out.println("BroadcastReceiver:ACTION_GATT_DISCONNECTED");
                 textview_iscConnected.setText("已断开连接");
+                textview_iscConnected.setTextColor(Color.RED);
                 String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                 btnScan.setText("搜索");
                 editText_sendMessage.setEnabled(false);
@@ -513,11 +516,12 @@ public class MainActivity extends AppCompatActivity {
                         else
                             Rx_str = Rx_str + Integer.toHexString(rxValue[i] & 0x0ff) + " ";
                     }
+
 //                    listAdapter.add("[" + DateFormat.getTimeInstance().format(new Date()) + "] RX: " + Rx_str);
 //                    messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);
-                    try {
+                    try
+                    {
                         doReceiptMsg(Rx_str);
-
                     } catch (Exception e) {
                         System.out.println(e.toString());
 //                        toastMessage(e.toString());
@@ -543,6 +547,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean flag2 = false;
 
     private void doReceiptMessage(String value) throws Exception {
+
+        tv3.setText(value);
         String[] split = value.split(" ");//每个字节的数组
         for (String s : split) {
             list.add(s);
@@ -555,6 +561,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         byte[] data = BytesHexStrTranslate.toBytes(sb.toString());
+
+        StringBuilder sb1 = new StringBuilder();
+        for (String s : list) {
+            sb1.append(s + " ");
+        }
+        set(sb1.toString().split(" "));
+
+        /*
         for (int i = 0; i < data.length; i++) {
             if (data[i] == 85 && data[i + 1] == -86) {
                 if (list.size() - i >= 73) {
@@ -568,10 +582,10 @@ public class MainActivity extends AppCompatActivity {
                         set(sb1.toString().split(" "));
                     } else {
                         list.clear();
-                    }
+                   }
                 }
-            }
-        }
+            }*/
+        //}
 
     }
 
@@ -607,7 +621,7 @@ public class MainActivity extends AppCompatActivity {
         double 时 = calcOneByte(split[14], 1, 0, 0);
         double 分 = calcOneByte(split[15], 1, 0, 0);
         double 秒 = calcOneByte(split[16], 1, 0, 0);
-        tv6.setText(("20"+split[11] + "-" + split[12] + "-" + split[13] + " " + split[14] + ":" + split[15] + ":" + split[16]));
+        tv6.setText(("BMS时钟： 20"+split[11] + "-" + split[12] + "-" + split[13] + " " + split[14] + ":" + split[15] + ":" + split[16]));
         double 电压节数 = calcOneByte(split[17], 1, 0, 1);
         double 温度个数 = calcOneByte(split[18], 1, 0, 1);
         tv7.setText("电压节数:" + 电压节数);
@@ -638,22 +652,22 @@ public class MainActivity extends AppCompatActivity {
 
         double 第7节电池电压 = calcTwoByte(split[31], split[32], 1, 0, 1);
         double 第8节电池电压 = calcTwoByte(split[33], split[34], 1, 0, 1);
-        tv13.setText("第7节电池电压:" + 第7节电池电压 + "mV\n第7节均衡状态:" + getDCStatus(bytes3[0] >> 6 & 0x01));
-        tv14.setText("第8节电池电压:" + 第8节电池电压 + "mV\n第8节均衡状态:" + getDCStatus(bytes3[0] >> 7 & 0x01));
+        tv33.setText("第7节电池电压:" + 第7节电池电压 + "mV\n第7节均衡状态:" + getDCStatus(bytes3[0] >> 6 & 0x01));
+        tv34.setText("第8节电池电压:" + 第8节电池电压 + "mV\n第8节均衡状态:" + getDCStatus(bytes3[0] >> 7 & 0x01));
         replacePointZero(tv33);
         replacePointZero(tv34);
 
         double 第9节电池电压 = calcTwoByte(split[35], split[36], 1, 0, 1);
         double 第10节电池电压 = calcTwoByte(split[37], split[38], 1, 0, 1);
-        tv13.setText("第9节电池电压:" + 第9节电池电压 + "mV\n第9节均衡状态:" + getDCStatus(bytes3_1[0] >> 0 & 0x01));
-        tv14.setText("第10节电池电压:" + 第10节电池电压 + "mV\n第10节均衡状态:" + getDCStatus(bytes3_1[0] >> 1 & 0x01));
+        tv35.setText("第9节电池电压:" + 第9节电池电压 + "mV\n第9节均衡状态:" + getDCStatus(bytes3_1[0] >> 0 & 0x01));
+        tv36.setText("第10节电池电压:" + 第10节电池电压 + "mV\n第10节均衡状态:" + getDCStatus(bytes3_1[0] >> 1 & 0x01));
         replacePointZero(tv35);
         replacePointZero(tv36);
 
         double 第11节电池电压 = calcTwoByte(split[39], split[40], 1, 0, 1);
         double 第12节电池电压 = calcTwoByte(split[41], split[42], 1, 0, 1);
-        tv13.setText("第11节电池电压:" + 第11节电池电压 + "mV\n第11节均衡状态:" + getDCStatus(bytes3_1[0] >> 2 & 0x01));
-        tv14.setText("第12节电池电压:" + 第12节电池电压 + "mV\n第12节均衡状态:" + getDCStatus(bytes3_1[0] >> 3 & 0x01));
+        tv37.setText("第11节电池电压:" + 第11节电池电压 + "mV\n第11节均衡状态:" + getDCStatus(bytes3_1[0] >> 2 & 0x01));
+        tv38.setText("第12节电池电压:" + 第12节电池电压 + "mV\n第12节均衡状态:" + getDCStatus(bytes3_1[0] >> 3 & 0x01));
         replacePointZero(tv37);
         replacePointZero(tv38);
 
@@ -661,7 +675,7 @@ public class MainActivity extends AppCompatActivity {
         double 电池温度2 = calcOneByte(split[44], 1, -40, 1);
 
         double 单体电池压差 = calcTwoByte(split[45], split[46], 1, 0, 1);
-        tv15.setText("电池温度1:" + 电池温度 + "  电池温度2:" + 电池温度2);
+        tv15.setText("温度1:" + 电池温度 + "  温度2:" + 电池温度2);
         tv16.setText("单体电池压差:" + 单体电池压差 + "mV");
         replacePointZero(tv15);
         replacePointZero(tv16);
@@ -804,23 +818,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if (list.size() > 59) {
+        if (list.size() > 73) {
             flag = false;
             list.clear();
             return;
         }
 
 
-        if (list.size() == 59) {
+        if (list.size() == 73)
+        {
             flag = false;
-
             for (int i = 0; i < list.size(); i++) {
                 String s = list.get(i);
             }
-
-
             StringBuilder builder = new StringBuilder();
-            for (String s : list) {
+            for (String s : list)
+            {
                 builder.append(s + " ");
             }
 //        listAdapter.add("收到的数据：" + sb.toString());
@@ -828,9 +841,7 @@ public class MainActivity extends AppCompatActivity {
 //        boolean flag1 = (crc(rxValue)) >> 8 == rxValue[58] && (byte) crc(rxValue) == rxValue[59];
             listAdapter.clear();
             set(split);
-
             messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);
-
         }
     }
 

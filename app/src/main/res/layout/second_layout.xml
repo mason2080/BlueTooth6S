@@ -593,11 +593,11 @@
 
                 <TextView
                     android:id="@+id/tv31"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:scrollbars="vertical"
                     android:gravity="center_vertical"
+                    android:scrollbars="vertical"
                     android:text=""
                     android:textColor="#ff0000" />
 
@@ -610,7 +610,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="0dp"
                 android:orientation="horizontal">
 
                 <TextView
